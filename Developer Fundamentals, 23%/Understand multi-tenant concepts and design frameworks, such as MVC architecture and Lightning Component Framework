@@ -1,1 +1,95 @@
-Understand multi-tenant concepts and design frameworks, such as MVC architecture and Lightning Component Framework.
+====Introduction - Multi-Tenant Architecture
+
+*Cloud computing: Platform as a Service (PaaS)
+*Shared system resources: CPU usage, queries, and records returned are limited per customer
+-If governor limits are exceeded, exceptions are thrown - these can be designed for
+*Automatic system updates: upgrades roll out 3x per year in Spring, Summer, and Winter
+*Metadata-driven kernel: architecture separates runtime database engine (kernel), tenant data, and metadata
+
+====MVC Architecture
+
+MVC is an architectural pattern that separates : data layer from business logic , how data is presented in the user interface.
+*Model: represents structure of the data through sObjects, fields, Apex classes
+    Standard objects, custom objects, object fields, object relationships, apex classes (data)
+*View: represents the presentation layer which consists of pages and components
+    Standard pages, visualforce pages, visualforce components, custom tabs, page layouts
+*Controller: represents the business logic. Custom controllers/controller extensions are Apex classes
+    Standard controllers, custom controllers (apex), extensions (apex), declarative rules and tools (apex triggers, validation rules, processes, etc)
+
+====Lightning Component Framework
+
+
+=====App manager
+*Apps: groups of tabs that work together as a unit
+        -Item at the top of list in Navigation Bar become the app’s landing page
+        -Lightning apps contain standard and custom tabs, Visualforce tabs, Lightning component tabs, Canvas apps, web tabs, Lightning Page tabs, and utilities like Sales Dialer.
+        -Utility Items can be added to the utility bar
+        -Navigation style (standard or console) and navigation rules for the Console navigation style (open as Workspace tabs/subtabs)
+        -Form factors (mobile, desktop, both)
+        -Only profiles assigned to the app will be able to access it
+
+====Lightning App Builder
+*Lightning App Builder is a declarative tool that can be used to create and configure custom pages for Lightning Experience and Salesforce mobile app
+        -Lightning App Builder allows building single-page apps, dashboard-style apps, “point” apps that solve a particular task, custom record pages, custom Home pages, custom email application panes
+        -Standard lightning components include Accordion, Chatter, Record Detail, Related Record
+        -Custom lightning components can be added to a lightning page
+        -Dynamic lightning pages make it possible to configure when a component appears on a Lightning page by adding filter conditions and logic in Lightning App Builder
+
+
+====Declarative Tools
+*Declarative automation tools can be used to implement simple and complex business processes:
+        -Workflow Rule: used to implement a business process that consists of a single if/then statement
+         new tasks, 
+         send an email alert, 
+         update the original record or its parent, 
+         send an outbound message
+
+        -Approval Process: used to submit a record for approval when a user clicks a button/link or when a flow/process submits a record for approval
+         new tasks, 
+         send an email alert, 
+         update the original record or its parent, 
+         send an outbound message
+
+        -Process Builder:useful when complexity of a business process consists of multiple if/then statements
+         create new records, 
+         update any related record, 
+         invoke Apex code, 
+         create a Chatter post, 
+         send an email alert, 
+         submit a record for approval, 
+         launch a flow or other process, 
+         send a custom notification
+         
+        -Flow Builder:automate a guided visual experience, start a business process from a user interaction, process, schedule, platform event, or record change.
+         create new records, 
+         delete records, 
+         launch another flow, 
+         update any record, 
+         send an email alert, 
+         send a custom notification, 
+         invoke Apex code, 
+         submit a record for approval, 
+         create a Chatter post, 
+         send an outbound message
+
+====Programmatic Tools
+used when a required functionality cannot be achieved using declarative tools.
+*Apex :used for complex business logic for apps.
+        -
+*Visualforce
+*Lightning Aura Components: 
+*Lightning Web Components:
+*
+====Lightning Platform APIs
+Wide range of useful APIs for various scenarios:
+        *REST API: programmatically access or process Salesforce data from an external application
+        *SOAP API: access, search, and perform DML operations on records from an external application
+        *Chatter REST API: show Chatter related data such as feed, users, or groups
+        *User Interface API: build user interfaces that surface records, list views, quick actions, favorites, and other components
+        *Analytics REST API: grants programmatic access to Salesforce Analytics data such as datasets, lenses, and dashboards
+        *Bulk API: lets developers and admins perform CRUD actions on large datasets (hundreds of thousands to millions of records) asynchronously in batches
+        *Metadata API: allows developers to programmatically retrieve, deploy, create, update, or delete customizations or metadata in an org
+        *Streaming API: used in receiving notifications based on record-change events or custom events in Salesforce
+        *Apex REST API: allows Apex classes to be exposed and invoked by external applications as REST web services
+        *Apex SOAP API: allows Apex classes to be exposed and invoked by external applications as SOAP web services
+        *Tooling API: provides ability to write SOQL queries for many metadata types in an org
