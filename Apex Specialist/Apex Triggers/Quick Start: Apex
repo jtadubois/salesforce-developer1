@@ -1,0 +1,7 @@
+====Create an Apex Class
+Apex is a Strongly typed, object-oriented programming language that allows developers to execute flow and transaction control statements on the Salesforce platform.
+
+public class OlderAccountsUtility {
+
+}
+====Apex Basics & Database
