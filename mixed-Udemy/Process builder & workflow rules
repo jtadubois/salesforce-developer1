@@ -1,0 +1,18 @@
+workflow rules
+-send email
+-create tasks
+-field updates
+-outbound messages
+
+process builder
+-workflow +
+-create records
+-launch flow
+-post to chatter
+-invoke apex
+-submit for approval
+
+flow
+-process builder +
+-record CRUD
+-iterate record list
