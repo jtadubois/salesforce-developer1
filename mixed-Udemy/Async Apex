@@ -1,0 +1,159 @@
+======Advantage of Async Apex
+runs in background
+can be scheduled
+can process more number of records
+can accomodate higher governor limits (wait until resource are available)
+
+======Async Features
+Future Methods
+Batch Apex
+Queueable Apex
+Scheduled Apex
+
+===========================================Future Methods
+-must be static
+-must have void return type
+-Can't call one future method from another one.
+-run when system resources are available
+-param must be primitive data types, collection of primitive data types
+==class==
+public class LeadAsynchronous {
+    @future
+    public static void updateLeadRecords(Set<Id> existingRecordIds){
+        List<Lead> existingRecords = [SELECT Id, LeadSource FROM Lead WHERE Id IN :existingRecordIds];
+        for(Lead record : existingRecords){
+            record.LeadSource = 'Web';
+        }
+        update existingRecords;
+        // calling another future method - NOT ALLOWED
+        // createLeadRecords();
+    }
+	  @future
+    public static void createLeadRecords(){
+        Lead anotherLead = new Lead(LastName='Test Lead Single', Status='Open - Not Contacted', Company='SFDCFacts', Industry='Finance');
+        insert anotherLead;
+    }
+}
+
+==Anonymous windows==
+Map<Id, Lead> leadRecords = new Map<Id, Lead> ([SELECT Id FROM Lead],null);
+// call first future method
+LeadAsynchronous.updateLeadRecords(leadRecords.keySet());
+// call 2nd future method
+LeadAsynchronous.createLeadRecords();
+
+===========================================Batch Apex
+-use to build complex, long running processes that run on thousands of records on the lighninh platform
+-can be scheduled
+-executes only once
+-Operate over small batches/chunks of records
+-implement Database.Batchable interface
+-can return 50 millions of records
+-each execution will get new set of governor limits
+-batch max size=2000
+==class==
+public class LeadBatch implements Database.Batchable<SObject> {
+    /**
+     * Start Method
+     * Executes only once
+     * Return batch scope or records
+     * Can return upto 50 million records
+     * */
+    public Database.QueryLocator start(Database.BatchableContext BC){
+        return Database.getQueryLocator('SELECT Id, LeadSource FROM Lead');
+    }
+
+    /**
+     * Execute Method
+     * Executes for each batch/chunk of records
+     * Must have void return type
+     * Each execution will get new set of governor limits
+     * */
+    public void execute(Database.BatchableContext BC, List<Lead> scope){
+        for(Lead leadRecord : scope){
+			    leadRecord.LeadSource = 'Web';
+        }
+        update scope;
+    }
+
+    /**
+     * Finish Method
+     * Executes only once
+     * Called after all batches are processed
+     * Can be used for post processing
+     * */
+    public void finish(Database.BatchableContext BC){
+        //send email here or call another batch class
+        System.debug('Batch finished');
+    }
+}
+==Anonymous windows==  [param1=batch instance] [param2=job name] [param3=minute from now]
+LeadBatch leadBatchInstance = new LeadBatch();
+// calling with a batch size 50
+Database.executeBatch(leadBatchInstance, 50);
+// calling with a batch size 2000
+Database.executeBatch(leadBatchInstance, 2000);
+// calling with default batch size 200
+Database.executeBatch(leadBatchInstance);
+
+===========================================Queueable Apex
+superset of future methods.
+-non primitive
+-monitoring
+-chaining job
+==class==
+public class LeadQueueable implements Queueable{
+    public void execute(QueueableContext context){
+        List<Lead> existingRecords = [SELECT Id, LeadSource FROM Lead];
+        // write async code
+        for(Lead record : existingRecords){
+            record.LeadSource = 'Web';
+        }
+        update existingRecords;
+        // you can call another queueable class as well
+    }
+}
+
+==Anonymous windows==
+LeadQueueable leadQueuableInstance = new LeadQueueable();
+Id jobId = System.enqueueJob(leadQueuableInstance);
+
+===========================================Scheduled Apex
+-run at a specific time or periodically
+
+==class==
+public class LeadSchedulable implements Schedulable{
+    public void execute(SchedulableContext sc){
+        // write your code here
+        List<Lead> existingRecords = [SELECT Id, LeadSource FROM Lead];
+        // write async code
+        for(Lead record : existingRecords){
+            record.LeadSource = 'Web';
+        }
+        update existingRecords;
+    }
+}
+
+==Anonymous windows==
+String cronExp = '00 30 8 1 * ?';
+               = sec(0-59) min(0-59) hr(0-23) day-of-month(1-31) month(1-12) day-of-week(1-7)
+? dont specify a value
+* all possible value
+/ specific increment
+L last possible value
+W closest weekday
+
+0  0  13  *  *  ?    run everyday at 1pm
+0  0  10  ?  *  MON-FRI  run MON through Friday at 10AM
+
+LeadSchedulable leadSchedulableInstance = new LeadSchedulable();
+String cronExp = '00 10 18 ? * SUN';
+String jobId = System.schedule('Sample Job', cronExp, leadSchedulableInstance);
+system.debug('Job id:'+ jobId);
+
+run and copy the Id
+to check 
+file/ open resource/crontrigger.obj
+select from id until endtime and click on query
+add where id='';
+you will see cron execution time
