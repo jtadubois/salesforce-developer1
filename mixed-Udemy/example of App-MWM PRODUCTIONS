@@ -1,0 +1,14 @@
+-produces 20 movies a year
+-coordinates with agencies to schedule prod with cast and crew members
+-needs salesforce instance to track various ongoing projects
+-need to track cast and crew availability and production schedule
+-need to track agencies for coordination with cast and crew members
+-need to automate alerts when schedule checkpoint are coming up
+
+1-create new lighning app
+app manager/new lightning app/ add accounts and contacts 
+2-create objects
+-Production
+(Status,Production start date,Release date,Summary)
+-Crew Member
+(Record Types :Crew Member ,Cast Member)
