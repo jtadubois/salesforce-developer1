@@ -1,0 +1,19 @@
+==========what is database trigger?
+Set of operations that is run when specific actions occur within a Database.
+
+==========what is Apex Trigger?
+Apex code that is run when specific actions occur within a salesforce object.
+
+==========Apex  supports triggers before and after follwing events:
+-Insert
+-Update
+-Delete
+-Merge
+-Upsert
+-Undelete
+==========Why do we need Apex Trigger?
+helpful in automating business processes.
+
+trigger LeadTrigger on Lead (before insert, before update) {
+	System.debug('Lead trigger called');
+}
