@@ -10,13 +10,37 @@ Batch Apex
 Queueable Apex
 Scheduled Apex
 
-===========================================Future Methods
+=======definition==
+public class LeadAsynchronous {
+    @future
+    public static void updateLeadRecords(Set<Id> existingRecordIds){
+    // calling another future method - NOT ALLOWED
+    }
+    @future
+    public static void createLeadRecords(){}
+}
+====================
+public class LeadBatch implements Database.Batchable<SObject> {
+	public Database.QueryLocator start(Database.BatchableContext BC){}
+	public void execute(Database.BatchableContext BC, List<Lead> scope){}
+	public void finish(Database.BatchableContext BC){}
+}
+=====================
+public class LeadQueueable implements Queueable{
+    public void execute(QueueableContext context){}
+}
+=====================
+public class LeadSchedulable implements Schedulable{
+    public void execute(SchedulableContext sc){}
+}
+=========================================================================================Future Methods
 -must be static
 -must have void return type
 -Can't call one future method from another one.
 -run when system resources are available
 -param must be primitive data types, collection of primitive data types
-==class==
+
+==Example class==
 public class LeadAsynchronous {
     @future
     public static void updateLeadRecords(Set<Id> existingRecordIds){
@@ -42,7 +66,7 @@ LeadAsynchronous.updateLeadRecords(leadRecords.keySet());
 // call 2nd future method
 LeadAsynchronous.createLeadRecords();
 
-===========================================Batch Apex
+================================================================================Batch Apex
 -use to build complex, long running processes that run on thousands of records on the lighninh platform
 -can be scheduled
 -executes only once
@@ -96,11 +120,12 @@ Database.executeBatch(leadBatchInstance, 2000);
 // calling with default batch size 200
 Database.executeBatch(leadBatchInstance);
 
-===========================================Queueable Apex
+===========================================================================Queueable Apex
 superset of future methods.
 -non primitive
 -monitoring
 -chaining job
+
 ==class==
 public class LeadQueueable implements Queueable{
     public void execute(QueueableContext context){
@@ -118,7 +143,7 @@ public class LeadQueueable implements Queueable{
 LeadQueueable leadQueuableInstance = new LeadQueueable();
 Id jobId = System.enqueueJob(leadQueuableInstance);
 
-===========================================Scheduled Apex
+===========================================================================================Scheduled Apex
 -run at a specific time or periodically
 
 ==class==
