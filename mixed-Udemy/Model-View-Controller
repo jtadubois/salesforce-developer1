@@ -1,0 +1,21 @@
+Model : where data is saved
+-custom object
+-standard objects
+-custom fields
+-Standard fields
+
+View: 
+-UI componenets
+-Page Layout
+-VisualForce Pages
+-App
+-Lightning components
+-Tabs
+
+Controller
+-Apex Classes
+-workflow rules
+-flow
+-Email alerts
+-processes
+-Logic components
