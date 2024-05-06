@@ -10,5 +10,8 @@ app manager/new lightning app/ add accounts and contacts
 2-create objects
 -Production
 (Status,Production start date,Release date,Summary)
+
 -Crew Member
 (Record Types :Crew Member ,Cast Member)
+create master detail to Production
+create master detail to Contact
