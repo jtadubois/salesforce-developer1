@@ -1,0 +1,179 @@
+
+
+-update a field
+-validate a record
+after trigger the record is read-only
+apxc for class and apxt for tigger
+==============syntax
+trigger name on sObject (trigger_event){
+}
+==============trigger events
+before insert
+before update
+before delete
+
+after insert
+after update
+after delete
+after undelete
+
+================before update
+trigger ApexTrigger1 on Account (before update){
+Account a = trigger.new[0];
+a.Name = a.Name + 'Limited';
+}
+================before insert
+tirgger ApexTrigger4 on Account (before insert){
+//non bulkifed
+Account a = trigger.new[0];
+a.NumberOfEmployees = 1250;
+//bulkified
+for(Account a: trigger.new){
+a.NumberOfEmployees = 1250;
+}
+}
+================before update
+trigger ApexTrigger6 on Account (before update) {
+    for (Opportunity oldopp: trigger.old){
+       	    for (Opportunity newopp: trigger.new){
+		        if(oldopp.id==newopp.id && oldopp.Amount != newopp.Amount )
+                    newopp.adderror('Are you serious? Amount cannot be changed');
+                      // newopp.amount.adderror('Are you serious? Amount cannot be changed'); //show error on amount field
+             }
+     }
+}
+================after insert
+trigger ApexTrigger3 on Contact (after insert){
+Contact c = trigger.new[0];
+Account a = new Account();
+a.Name = c.LastName + '& Company';
+Insert a;
+}
+
+===================newMap (modify account will do the same for all the contact related to account) 
+Map<Id,Account> nMap = new Map<Id,Account>();
+nMap = trigger.newMap;
+List<Contact> cList = [select LastName,AccountId,MailingCity from Contact where AccountId in : nMap.keySet()];
+for(Contact c: cList) {
+Account a = nMap.get(c.AccountId);
+c.MailingCity = a.BillingCity;
+}
+update cList;
+}
+====================oldMap ()
+Map<Id,Opportunity> oMap = new Map<Id,Opportunity>();
+oMap = trigger.oldMap;
+for(Opportunity newopp: trigger.new) {
+Opportunity oldopp = new Opportunity();
+oldopp = oMap.get(newopp.Id);
+if(newopp.amount != oldopp.Amount) {
+newopp.Amount.adderror('Amount cannot be changed');
+}
+}
+}
+
+=====================
+trigger ApexTrigger8 on Contact (before insert,after insert,before update,after update,before delete,after delete){
+if(trigger.isBefore){
+    if(trigger.isInsert){
+       System.debug('before Insert');
+    } else if (trigger.isUpdate){
+        System.debug('before update');
+    }else if (trigger.isDelete){
+        System.debug('before delete');
+    }
+  } else 
+if(trigger.isAfter){
+    if(trigger.isInsert){
+     System.debug('after Insert');
+    } else if (trigger.isUpdate){
+        System.debug('after update');
+    }else if (trigger.isDelete){
+        System.debug('after delete');
+    }else if (trigger.isunDelete){
+        System.debug('after undelete');
+    }
+ }
+}
+
+======================= for helper
+trigger ApexTrigger10 on Account (before insert,after insert,before update,after update){
+if(trigger.isbefore){
+    if(trigger.isInsert) {
+      AccTriggerHelper.BeforeInsertMethod(Trigger.new);
+     }
+     else if(trigger.isUpdate){
+      AccTriggerHelper.BeforeUpdateMethod(Trigger.oldMap,Trigger.new);
+      }
+     else if(trigger.isDelete){
+      AccTriggerHelper.BeforeDeleteMethod(Trigger.old);
+      }
+}else 
+if(trigger.isAfter){
+    if(trigger.isInsert) {
+      AccTriggerHelper.firstMethod(Trigger.new);
+      AccTriggerHelper.secondMethod(Trigger.new);
+     }
+     else if(trigger.isUpdate){
+       //write code here
+      }
+     else if(trigger.isDelete){
+       //write code here
+      } 
+      else if(trigger.isunDelete){
+       //write code here
+      }
+}
+}
+-----------------------------------------------------------helper class
+public class AccTriggerHelper{
+  public static void BeforeInsertMethod(List<Account> accList){
+    for(Account a: accList) {
+     a.name = 'Mr/Ms' + a.name;
+    }
+  }
+public static void BeforeUpdateMethod(Map<ID,Account> acMap,List<Account> accList){
+    for(Account newAcc: accList) {
+      Account oldAcc = new Account();
+      oldAcc = acMap.get(newAcc.Id);
+      if(newAcc.Name != oldAcc.name){
+          newAcc.Name.addError('Account name cannot be modified');
+       }
+    }
+}
+=================context variables
+1-trigger.new= return the list of record because of which the execution of the trigger got initiated
+or the database operation was initiated.
+
+2-trigger.old = return the previous version of the sObject records because of which the trigger execution
+got initiated. (only in ****update and delete trigger***)
+
+3-trigger.newmap (ID,Sobjects)
+(only in before update, after update, after insert, after undelete)
+
+4-trigger.oldmap (ID,Sobjects)
+(only in ****update and delete trigger***)
+
+5-isInsert
+6-isUpdate
+7-isDelete
+8-isUndelete
+9-isBefore
+10-isAfter
+11-Size
+
+======================================Bulkified triggers with trigger.new instead of trigger.new[0]
+
+==================trigger helper class design pattern
+problem: trigger order of execution
+write all the logic inside a helper class
+create a single trigger for each object
+for new fonctionality add method in helper class and call in trigger object
+
+=================recursion in triggers,bulkified, helper class are good practices
+
+Important points
+1-trigger.new and trigger.old cannot be used into a DML operation and statement
+2-trigger.new cannot be deleted. trigger old is read only
+3-upsert and merge dont have their own trigger because they fired their relevant
+trigger according to the events that are happening as a resut of upsert or merge operations
