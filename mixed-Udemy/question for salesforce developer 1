@@ -1,5 +1,12 @@
 Which of the following are capable of automatically updating field values on child records when a parent record is modified?
-Process Builder
-Flow Builder
-Apex trigger
+*Process Builder
+*Flow Builder
+*Apex trigger
+
+Cosmic Containers requires that when saving an opportunity record, a check is performed to determine if the opportunity amount 
+is the highest value amongst all the opportunities created in the current year. If so, a checkbox on the opportunity record should 
+be marked, and an email should be sent to the record owner's manager. Which Salesforce feature should be recommended to handle this requirement?
+*Flow Builder
+
+
 
