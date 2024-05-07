@@ -1,0 +1,99 @@
+*************************************************************************************************************database class Methods
+=====================//database.insert()
+List<Account> accList= new List<Account>();
+for(integer i=1;i<=20;i++) {
+Account a=new Account();
+a.Name='Test Account' + i;
+accList.add(a);
+}
+accList.add(new Account()); //name is required then error will occur
+insert accList;  //nothing will get inserted because of this error
+Database.insert(accList); // nothing will get inserted
+Database.insert(accList,false); //records except the last one
+====================//database.update
+for (Account a: accList){
+a.Name='Update'+ a.Name;
+}
+Database.update(accList,false);
+=====================//database.upsert
+for (integer i=1;i<=20;i++){
+Account a=new Account();
+a.Name='Upsert Account' + i;
+accList.add(a);
+}
+Database.upsert(accList,false);
+=======================//database.delete
+Database.delete(accList,false);
+=======================//database.undelete
+Database.undelete(accList,false);
+========================//database.merge
+Account a=accList[0];
+Account b=accList[1];
+Database.merge(a,b);
+*************************************************************************************************************Empty recycle bin
+List<Account> acclIST = [Select ID from Account where isDeleted = true ALL ROWS ];
+Database.emptyRecycleBin(accList);
+*************************************************************************************************************Count Query
+Integer i= Database.countquery('select count() from Account');
+System.debug(i);
+**************************************************************************************************************leadConvert
+converts a lead into an account and contact or an account and person account
+
+lead l= [Select name from lead where name like 'jou%' LIMIT 1];
+Database.leadConvert lc = new  Database.leadConvert();
+lc.setLeadId(l.id);
+lc.convertedStatus = 'Closed - Converted';
+lc.ownerId = '0056F00000AXAKs';// any user
+Database.leadConvertResult lcr = Database.convertLead(lc);
+**************************************************************************************************************Transaction control & Rollback
+public class DatabaseClass3 {
+public static void MyMethod() {
+Savepoint sp1 = Database.setSavepoint();
+try{
+Opportunity o = [select Name, Account.ID,Amount,OwnerID from Opportunity where name like 'GenePoint SL%'];
+Decimal commision = o.Amount * 0.20;
+o.amount = o.amount + commision;
+update o;
+commision__c c=new commision__c();
+c.commision_amount__c = commision;
+c.Agent__c = o.ownerId;
+insert c;
+
+account acc2 = [select name from account where id= :o.accountID];
+acc2.Discount_Percentage__c = 20 ;
+update acc2;
+}
+catch(Exception e){Database.roolback(sp1);}
+}
+}
+**************************************************************************************************************Result object
+insert/update  = save result class
+delete = delete result class
+Upsert =
+merge = merge result class
+undelete = undelete result class
+convertedLead = Lead convert result class
+emptyRecycleBin = empty Recycle bin result class
+
+public class DatabaseClass4{
+public static void myMethod(){
+List<account> accList = new List<account>();
+for (integer i=0;i<10;i++){
+accList.add(new Account(Name='Result Test'+i, numberOfEmployees=i));
+}
+accList.add(new Account());
+System.debug('Total Accounts'+ accList.size());
+Database.saveResult[] savelist = Database.insert(accList,false);
+for(Database.saveResult s : saveList){
+if(s.isSuccess()){
+System.debug('I was successful ='+ s.getID());
+}else{
+system.debug('I was unsuccessful ='+ s.getID() + 'because of the following:');
+for(Database.error dr : s.getErrors()){
+System.debug(dr.getStatusCode() + ''+dr.getMessage());
+System.debug('fields affected by insertion are :'+dr.getFields());
+}
+}
+}
+}
+}
