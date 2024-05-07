@@ -105,4 +105,76 @@ update accList;
 }catch(){
 System.debug('this is a generic '+ e.getMessage());
 }
-***********************************************************9-
+***********************************************************9-handling multiples exception
+
+public class Exception0{
+  public static void myMethod(){
+    try {
+          if(i==0) {
+              integer a;
+              integer b=a*5;
+           } else if(i>0) {
+               Account acc = new Account();
+               insert acc;
+            } else {
+            List<Integer> iList = new Integer[]{1,2,3};
+            integer sum = iList[0] + iList[1] + iList[2] + iList[3] ;
+          }
+        }
+ catch(NullPointerException npe){
+System.debug('there is no object in the reference variable' + npe.getMessage());
+}
+catch(DMLException de){
+System.debug('record cannot be inserted'+ de.getMessage());
+}
+catch(ListException le){
+System.debug('there is no value on this index'+ le.getMessage());
+}
+//generic exception
+catch(Exception e){
+System.debug('I execute when there is any other exception except DMLException or NullPointerException in the try block');
+}
+finally {
+    System.debug('no matter whether an eception in the try block occured or not I will always execute');
+ }
+    }
+}
+
+***********************************************************10- Custom exception
+public class NumberIsNegativeException extends Exception {
+  public override String getMessage(){
+  return 'Just a new Exception created by me for the negative number';
+  }
+}
+
+public class ExceptionHandling5 {
+    public static void myMethod(integer) {
+        try{
+            if(i<0) {
+                NumberIsNegativeException n = new NumberIsNegativeException();
+                throw n;
+            }
+            else {
+                i = i * i * 10;
+                System.debug(i);
+            }
+        }
+        catch(NumberIsNegativeException ne){
+            System.debug(ne.getMessage());
+        }
+    }
+}
+
+***********************************************************11-Common Exception Methods
+System.debug(e.getCause()); //return the cause of the exception
+System.debug(e.getLineNumber()); //return the line from where the exception was thrown
+System.debug(e.getMessage()); //return the error message display for the user
+System.debug(e.getStackTraceString()); //return the stack trace as a string
+System.debug(e.getTypeName()); //return the type of exception
+
+*************************************************************12-Exceptions that can not be caught
+System.LimitException when the governor limit is exceeded such as:
+-maximum number of SOQL
+-when assertion statement fail through System.assert methods or licence exceptions
+
+when Exception are uncatchable , catch blocks, finally block arent executed.
