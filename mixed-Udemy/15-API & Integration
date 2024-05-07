@@ -1,0 +1,17 @@
+app A----------call API(Request)---------------> app B ---------Response-------->app A
+callout                                 web service 
+
+-before making a callout you should authenticate yourself
+===========================================================Types of API
+-REST API
+-SOAP API
+-Metadata API
+===========================================================
+@RESTResource(urlMapping='/CreateLead')
+global class CreateLeadAPI
+{
+    @HTTPPost
+    global static String doPost(){
+        return 'Hey';
+    }
+}
