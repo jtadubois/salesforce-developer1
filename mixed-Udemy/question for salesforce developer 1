@@ -8,5 +8,18 @@ is the highest value amongst all the opportunities created in the current year. 
 be marked, and an email should be sent to the record owner's manager. Which Salesforce feature should be recommended to handle this requirement?
 *Flow Builder
 
+Which of the files below can the $ContentAsset global value provider reference?
+-images
+-css files(stylesheet)
+-javascript files
+
+Cosmic Solutions is using Salesforce Connect to allow Salesforce users of the company to view orders that exist in an external order management system. 
+Each order record has a unique record identifier in the external system which is visible in Salesforce via Salesforce Connect. 
+Salesforce is used to create shipment records. Since each order can be associated with one or more shipments, the sales director 
+of the company would like to allow users to choose an order while creating a shipment record in Salesforce. Which of the following 
+should a developer define on the 'Shipment__c' object for this use case?
+ *External Lookup Relationship Field
+choose an (external)order(parent) while creating a (Internal)shipment(child)
 
 
+lead(standard)---------------sub lead(custom)(lookup relationship)
