@@ -1,0 +1,108 @@
+1-An exception denotes an error or event that disrupts the normal flow of code execution.
+=================================================2-what happens when an exception occurs?
+*code execution halts
+*any DML operations that were processed before the exception are rolled back and are not committed to the database.
+*Exceptions get logged in debug logs.
+*the end user sees an error message in the salesforce user interface
+*for unhandled exceptions, that the code doesnt catch, salesforce sends an email that include the exception infos.
+
+===================================================3-Types of Exceptions:
+*System defined
+  -DML
+  -List
+  -NullPointer
+  -Query
+*Custom or User-defined
+  -Generic exception
+==============================================4-Exceptions statements
+*throw statements
+used to generate an exception or signal that an exception occurred.
+
+*Try-catch-finally statements
+capture an exception and handle it.
+catch is optional so a single try can have 0 or more catch where each catch must have a unique exception type.
+when one exception is caught , the remaining are not executed.
+Finally block is mandatorily executed at the end whether the eception occured in the try block or not.
+
+=============================================5- exception handling syntax
+try {
+} catch {
+} catch{
+} finally {
+}
+=============================================6-example
+public class Exception0{
+public static void myMethod(){
+try {
+integer a;
+integer b = a*5;
+}catch(Exception e){
+System.debug('I catched the exception');
+}
+finally {
+System.debug('no matter whether an eception in the try block occured or not ');
+}
+}
+}
+===============================================7-system exception
+**********DML exception
+try{
+Account a = new Account();
+insert a;
+}
+catch(DMLException de){
+System.debug('record cannot be inserted'+ de.getMessage());
+}
+**********ListException
+try{
+List<String> list= new List<String>('Aman','Ashish','Deepika');
+System.debug(list.get(0));
+System.debug(list.get(1));
+System.debug(list.get(2));
+System.debug(list.get(3));
+}catch(ListException le){
+System.debug('there is no value on this index'+ le.getMessage());
+}
+**********NullPointer
+example1:
+try{
+integr a;
+integer b=a*8;
+
+example2:
+List<integer> l ;
+l.add(30);
+
+example3:
+Account acc;
+acc.Name='Disney';
+} catch(NullPointerException npe){
+System.debug('there is no object in the reference variable' + npe.getMessage());
+}
+**********QueryException
+try{
+Account a = [select name from account where name='disney'];
+}catch(QueryException qe){
+System.debug('There is a problem with this query'+ qe.getMessage());
+}
+*********sObjectException
+try{
+List<account> acclist= [select name from account];
+for (account a: acclist){
+System.debug(a.NumberOfEmployees);
+}
+}catch(sObjectException soe){
+System.debug('There is a problem with this query'+ soe.getMessage());
+}
+***********************************************************8-Generic exception
+we dont know which error is coming up.
+try{
+List<Account> accList = [select name from account];
+for(account a: accList){
+a.NumberOfEmployees=1000;
+}
+update accList;
+}catch(){
+System.debug('this is a generic '+ e.getMessage());
+}
+***********************************************************9-
